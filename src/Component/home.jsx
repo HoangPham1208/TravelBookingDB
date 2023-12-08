@@ -64,7 +64,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-        <div className="grid grid-cols-2 justify-between pt-5 pb-16">
+        <div className="grid grid-cols-2 justify-between pt-5 pb-16 gap-20">
           <div className="bg-amber-100 md:w-92 md:h-fit rounded-2xl px-5 opacity-90 place-self-center p-3 shadow-2xl">
             {/* NEED Join of owner service like hotel,plane and restaurant */}
             <h1 className="font-bold text-center text-lg ">Welcome to TravelLooking <br/> Your gateway to business growth! </h1>

@@ -3,10 +3,21 @@ import { useNavigate } from "react-router-dom";
 import SearchingPlane from "./searchingPlane";
 import SearchingHotel from "./searchingHotel";
 import SearchingRestaurant from "./searchingRestaurant";
+import { useState } from "react";
 
 export default function User() {
-   const navigate = useNavigate();
-    return (
+    const [isEmpty, setIsEmpty] = useState(true);
+    const navigate = useNavigate();
+    const handleScroll = () =>{
+      window.scroll({
+        top: 500, 
+        behavior: 'smooth'
+      });
+    }
+    const handleOrder = () =>{
+
+    }
+     return (
       <>
       <section className="relative isolate overflow-hidden bg-gray-900 xl:h-full pb-10">
         <img
@@ -59,7 +70,9 @@ export default function User() {
           </div>
         </div>
         <div className="text-white text-center">
-          <button className="bg-gray-400 p-3 rounded-3xl font-serif font-medium text-4xl hover:bg-teal-300 hover:text-fuchsia-500">Order now</button>
+          <button 
+            onClick={(isEmpty) ? handleScroll : handleOrder}
+          className="bg-gray-400 p-3 rounded-3xl font-serif font-medium text-4xl hover:bg-teal-300 hover:text-fuchsia-500">Order now</button>
         </div>
       </section>
       <section className="pb-10 pt-5">

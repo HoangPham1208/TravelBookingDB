@@ -1,13 +1,39 @@
 import React, { useState } from "react";
 import { TERipple } from "tw-elements-react";
 import { useNavigate } from "react-router-dom";  
-
+import axios from "axios";
+import Cookie from "universal-cookie";
 
 export default function LoginForm({visible, onClose}){
+  const cookie = new Cookie();
   const [role, setRole] = useState("user"); // ["user", "provider"]
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const handleOnClose = () => {
     onClose();
+  }
+  const handleSubmit = () =>{
+    const data = {
+      username : username,
+      password : password,
+      role : role
+    }
+    axios.post("http://localhost:5000/login", data)
+    .then((res) => {
+      console.log(res.data)
+      if (data.role === "user"){
+        navigate("/user")
+      }
+      else{
+        navigate("/provider")
+      }
+      cookie.set("token", res.data.token, {path: "/"})
+    })
+    .catch((err) => {
+      console.log(err)
+      alert("Username not found or password is incorrect")
+    })
   }
   if (!visible) return null;
   return (
@@ -84,12 +110,21 @@ export default function LoginForm({visible, onClose}){
               </div>
               <div className="LoginForm p-5">
                 <div>
-                  Email
-                  <input type="text" placeholder="Email" className="border-2 border-gray-300 rounded-md p-2 w-full my-3"/>
+                  Username
+                  <input type="text" 
+                  onChange={(e) => {
+                    setUsername(e.target.value)
+                  }
+                  }
+                  placeholder="Email" className="border-2 border-gray-300 rounded-md p-2 w-full my-3"/>
                 </div>
                 <div>
                   Password
-                  <input type="password" placeholder="Password" className="border-2 border-gray-300 rounded-md p-2 w-full my-3" />
+                  <input type="password" 
+                  onChange={(e) => {
+                    setPassword(e.target.value)}
+                  }
+                  placeholder="Password" className="border-2 border-gray-300 rounded-md p-2 w-full my-3" />
                 </div>
                 <div>
                   Role
@@ -124,10 +159,7 @@ export default function LoginForm({visible, onClose}){
                 <button
                   type="button"
                   onClick={
-                    () => {
-                      if (role === "provider") navigate("/provider")
-                      else navigate("/user")
-                    }
+                    ()=>handleSubmit()
                   }
                   className="bg-gray-400 text-white font-semibold px-3 py-1 text-xl my-7 rounded-3xl hover:bg-gray-300"
                 >
