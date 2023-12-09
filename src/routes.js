@@ -12,20 +12,49 @@ import ManagerService from "./Component/managerService";
 import {Routes, Route, BrowserRouter } from "react-router-dom";
 import React from "react";
 
+import ProtectedRoute from "./Utils/protectedRoute";
+
 export default (
     <BrowserRouter>
         <Routes>
             <Route index element={<Home />} />
-            <Route path="/user" element={<User />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path ="/cart/details" element={<Details />} />
-            <Route path="/user/listPlane" element={<ListPlane />} />
-            <Route path="/user/listPlane/passenger" element={<InsertPassenger />} />
-            <Route path="/user/ticketPlane" element={<TicketPlane />} />
-            <Route path="/provider" element={<Provider />} />
-
-            <Route path="/provider/managerService" element={<ManagerService />} />
+            <Route path="/user" element={
+                <ProtectedRoute>
+                    <User />
+                </ProtectedRoute>} />
+            <Route path="/account" element={
+                <ProtectedRoute>
+                    <Account />
+                </ProtectedRoute>} />
+            <Route path="/cart" element={
+                <ProtectedRoute>
+                    <Cart />
+                </ProtectedRoute>} />
+            <Route path ="/cart/details" element={
+                <ProtectedRoute>
+                    <Details />
+                </ProtectedRoute>} />
+            <Route path="/user/listPlane" element={
+                <ProtectedRoute>
+                    <ListPlane />
+                </ProtectedRoute>} />
+            <Route path="/user/listPlane/passenger" element={
+                <ProtectedRoute>
+                    <InsertPassenger />
+                </ProtectedRoute>} />
+            <Route path="/user/ticketPlane" element=
+                {<ProtectedRoute>
+                    <TicketPlane />
+                </ProtectedRoute>} />
+            <Route path="/provider" element={
+                <ProtectedRoute>
+                    <Provider />
+                </ProtectedRoute>} />
+                
+            <Route path="/provider/managerService" element={
+                <ProtectedRoute>
+                    <ManagerService />
+                </ProtectedRoute>} />
         </Routes>
     </BrowserRouter>
 );

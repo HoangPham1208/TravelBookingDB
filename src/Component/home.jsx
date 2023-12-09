@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import LoginForm from "../Utils/PopupForm";
 
-
 export default function Home() {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const handleOnClose = () => setShowLoginForm(false);

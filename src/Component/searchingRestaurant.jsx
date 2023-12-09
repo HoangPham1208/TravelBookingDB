@@ -24,7 +24,7 @@ export default function SearchingRestaurant() {
         <div>
         <div className="flex justify-center pt-3 text-3xl font-medium font-serif">Choosing your best restaurant</div>
         <div className="container my-7 mx-auto flex justify-center items-center p-2 md:p-0">
-          <div className="border border-gray-300 p-6 grid grid-cols-1 gap-6 bg-white shadow-lg rounded-lg">
+          <div className="border border-gray-300 p-6 grid grid-cols-1 gap-6 bg-white shadow-lg rounded-lg ">
             <div className="flex flex-col md:flex-row justify-between">
             <div className="w-full justify-start flex"></div>
               <div className="w-full justify-center flex">

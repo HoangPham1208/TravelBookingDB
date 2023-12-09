@@ -2,8 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import PassengerList from "../Utils/PopupPassenger";
+import Cookies from "universal-cookie";
 
 export default function Details() {
+    const cookie = new Cookies();
     const [showPassenger, setShowPassenger] = useState(false);
     const handleOnClose = () => {
         setShowPassenger(false);
@@ -29,6 +31,12 @@ export default function Details() {
           )
         }
     return content
+    }
+    const handleLogout = () =>{
+      cookie.remove("token");
+      cookie.remove("role");
+      localStorage.clear();
+      navigate('/');
     }
     return (
         <>
@@ -64,7 +72,7 @@ export default function Details() {
                   <button onClick={() => navigate('/account')} href="#" className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Account</button>
                 </li>
                 <li>
-                  <button onClick={() => navigate('/')}  className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Logout</button>
+                  <button onClick={handleLogout}  className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Logout</button>
                 </li>
                 
               </ul>
@@ -80,7 +88,7 @@ export default function Details() {
         </div>
       </section>
       <section>
-        <div className="text-center font-bold font-serif py-7 text-3xl">Your plane tickets are READY</div>
+        <div className="text-center font-bold font-serif py-7 text-3xl">All your tickets are here</div>
         <div className="text-start font-medium font-serif text-lg md:mx-20"> Number of plane tickets: 1</div>
         <div className="container my-7 mx-auto grid grid-cols-2 gap-20 justify-center items-center p-2 md:p-0">          
             {getTicket()}

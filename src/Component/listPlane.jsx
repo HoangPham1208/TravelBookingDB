@@ -1,49 +1,46 @@
-import { Tab } from "@material-tailwind/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Table from "../Utils/Table";
+import {useState , useEffect} from 'react';
+import Cookies from 'universal-cookie';
+import axios from 'axios'
 
-const Plane = [
-  {"id": "VNA001", "departure" : "Ho Chi Minh", "arrival" : "Hanoi", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 12:00"},
-  {"id": "VNA002", "departure" : "Ho Chi Minh", "arrival" : "Hanoi", "datetime_departure" : "2021-11-10 10:05", "datetime_arrival" : "2021-11-10 12:00"},
-  {"id": "VNA002", "departure" : "Ho Chi Minh", "arrival" : "Hanoi", "datetime_departure" : "2021-12-10 11:05", "datetime_arrival" : "2021-12-10 13:00"},
-  {"id": "VNA003", "departure" : "Ho Chi Minh", "arrival" : "Hanoi", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 12:00"},
-  {"id": "VNA004", "departure" : "Ho Chi Minh", "arrival" : "Hanoi", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 12:00"},
-  {"id": "VNA005", "departure" : "Ho Chi Minh", "arrival" : "Hanoi", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 12:00"},
-  {"id": "VNA006", "departure" : "Ho Chi Minh", "arrival" : "Hanoi", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 12:00"},
-  {"id": "VNA007", "departure" : "Ho Chi Minh", "arrival" : "Hanoi", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 12:00"},
-  {"id": "VNA008", "departure" : "Ho Chi Minh", "arrival" : "Hanoi", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 12:00"},
-  {"id": "VNA009", "departure" : "Ho Chi Minh", "arrival" : "Hanoi", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 12:00"},
-  {"id": "BBO001", "departure" : "Ho Chi Minh", "arrival" : "Da Nang", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 11:00"},
-  {"id": "BBO002", "departure" : "Ho Chi Minh", "arrival" : "Da Nang", "datetime_departure" : "2021-11-10 10:00", "datetime_arrival" : "2021-11-10 11:00"},
-  {"id": "BBO003", "departure" : "Ho Chi Minh", "arrival" : "Da Nang", "datetime_departure" : "2021-12-10 10:00", "datetime_arrival" : "2021-12-10 11:00"},
-  {"id": "BBO004", "departure" : "Ho Chi Minh", "arrival" : "Da Nang", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 11:00"},
-  {"id": "BBO005", "departure" : "Ho Chi Minh", "arrival" : "Da Nang", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 11:00"},
-  {"id": "BBO006", "departure" : "Ho Chi Minh", "arrival" : "Da Nang", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 11:00"},
-  {"id": "BBO007", "departure" : "Ho Chi Minh", "arrival" : "Da Nang", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 11:00"},
-  {"id": "BBO008", "departure" : "Ho Chi Minh", "arrival" : "Da Nang", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 11:00"},
-  {"id": "BBO009", "departure" : "Ho Chi Minh", "arrival" : "Da Nang", "datetime_departure" : "2021-10-10 10:00", "datetime_arrival" : "2021-10-10 11:00"}
-]
+// const Plane = [
+//   {"MaSo": "VNA001", "Ngay": "2021-10-10", "ThoiGianXuatPhat": "10:00", "ThoiGianHaCanh": "12:00", "DiaDiemXuatPhat": "Ho Chi Minh", "DiaDiemHaCanh":"Ha Noi"},
+//   {"MaSo": "VNA002", "Ngay": "2021-10-10", "ThoiGianXuatPhat": "10:00", "ThoiGianHaCanh": "12:00", "DiaDiemXuatPhat": "Ho Chi Minh", "DiaDiemHaCanh":"Ha Noi"},
+//   {"MaSo": "VNA003", "Ngay": "2021-10-10", "ThoiGianXuatPhat": "10:00", "ThoiGianHaCanh": "12:00", "DiaDiemXuatPhat": "Ho Chi Minh", "DiaDiemHaCanh":"Ha Noi"},
+//   {"MaSo": "VNA004", "Ngay": "2021-10-10", "ThoiGianXuatPhat": "10:00", "ThoiGianHaCanh": "12:00", "DiaDiemXuatPhat": "Ho Chi Minh", "DiaDiemHaCanh":"Ha Noi"},
+//   {"MaSo": "VNA005", "Ngay": "2021-10-10", "ThoiGianXuatPhat": "10:00", "ThoiGianHaCanh": "12:00", "DiaDiemXuatPhat": "Ho Chi Minh", "DiaDiemHaCanh":"Ha Noi"},
+//   {"MaSo": "VNA006", "Ngay": "2021-10-10", "ThoiGianXuatPhat": "10:00", "ThoiGianHaCanh": "12:00", "DiaDiemXuatPhat": "Ho Chi Minh", "DiaDiemHaCanh":"Ha Noi"},
+//   {"MaSo": "VNA007", "Ngay": "2021-10-10", "ThoiGianXuatPhat": "10:00", "ThoiGianHaCanh": "12:00", "DiaDiemXuatPhat": "Ho Chi Minh", "DiaDiemHaCanh":"Ha Noi"},
+//   {"MaSo": "VNA008", "Ngay": "2021-10-10", "ThoiGianXuatPhat": "10:00", "ThoiGianHaCanh": "12:00", "DiaDiemXuatPhat": "Ho Chi Minh", "DiaDiemHaCanh":"Ha Noi"},
+//   {"MaSo": "VNA009", "Ngay": "2021-10-10", "ThoiGianXuatPhat": "10:00", "ThoiGianHaCanh": "12:00", "DiaDiemXuatPhat": "Ho Chi Minh", "DiaDiemHaCanh":"Ha Noi"},
+//   {"MaSo": "VNA0010", "Ngay": "2021-10-10", "ThoiGianXuatPhat": "10:00", "ThoiGianHaCanh": "12:00", "DiaDiemXuatPhat": "Ho Chi Minh", "DiaDiemHaCanh":"Ha Noi"},
+// ]
 const columns = [
   {
     name: 'ID',
-    accessor: 'id',
+    accessor: 'MaSoMayBay',
   },
   {
     name: 'Departure',
-    accessor: 'departure',
+    accessor: 'DiaDiemXuatPhat',
   },
   {
     name: 'Arrival',
-    accessor: 'arrival',
+    accessor: 'DiaDiemHaCanh',
   },
   {
     name: 'Datetime departure',
-    accessor: 'datetime_departure',
+    accessor: 'ThoiGianXuatPhat',
   },
   {
     name: 'Datetime arrival',
-    accessor: 'datetime_arrival',
+    accessor: 'ThoiGianHaCanh',
+  },
+  {
+    name: 'Price',
+    accessor: 'GiaKhoang',
   },
   {
     name: 'Choose plane',
@@ -51,7 +48,56 @@ const columns = [
   },
 ];
 export default function ListPlane() {
+    const cookie = new Cookies();
+    const [Plane,setPlane] = useState([])
+    useEffect(()=>{
+      ( async () => {
+        const current = JSON.parse(localStorage.getItem('currentFlight')).flights
+        const data = {
+        startDate: current[0].NgayXuatPhat,
+        deptLoc: current[0].NoiXuatPhat,
+        destLoc: current[0].NoiHaCanh,
+        quantity: current[0].SoLuong
+        }
+        await axios.post('http://localhost:5000/flight', data).then((res) => {
+           console.log(res)
+        // the Plane data have datetime in time arrival and departure column, so we need to convert it to time only
+        const newPlane = res.data.flights.map((item) => {
+          const newTime = item.ThoiGianXuatPhat.split('T')[1].split('.')[0]
+          const newTime2 = item.ThoiGianHaCanh.split('T')[1].split('.')[0]
+          return {...item,ThoiGianXuatPhat:newTime,ThoiGianHaCanh:newTime2}
+        })
+        // Cause the plane can be duplicate, so we need to remove it, we only choose the plane of each airline which have the lowest price
+        const newPlane2 = []
+        for(let i = 0; i < newPlane.length; i++){
+          let check = true
+          for(let j = 0; j < newPlane2.length; j++){
+            if(newPlane[i].MaSoMayBay === newPlane2[j].MaSoMayBay){
+              check = false
+              if(newPlane[i].GiaKhoang < newPlane2[j].GiaKhoang){
+                newPlane2[j] = newPlane[i]
+              }
+            }
+          }
+          if(check){
+            newPlane2.push(newPlane[i])
+          }
+        }
+        setPlane(newPlane2)
+      }).catch((err) => {
+        console.log(err);
+      }
+      );
+      })();
+
+    },[]);
     const navigate = useNavigate();
+    const handleLogout = () =>{
+      cookie.remove("token");
+      cookie.remove("role");
+      localStorage.clear();
+      navigate('/');
+    }
     return (
       <>
         <section className="relative isolate overflow-hidden bg-gray-900 xl:h-full pb-10">
@@ -74,7 +120,8 @@ export default function ListPlane() {
                 </li>
                 <li>
                     <button 
-                    onClick={() => navigate('/user')}
+                    onClick={() => {
+                      navigate('/user')}}
                     className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">
                         <img src="/arrow-left.svg" className="h-8" />
                     </button>
@@ -86,7 +133,7 @@ export default function ListPlane() {
                   <button onClick={() => navigate('/account')} href="#" className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Account</button>
                 </li>
                 <li>
-                  <button onClick={() => navigate('/')}  className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Logout</button>
+                  <button onClick={handleLogout}  className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Logout</button>
                 </li>
                 
               </ul>
@@ -105,8 +152,8 @@ export default function ListPlane() {
         <div className="text-center text-3xl font-serif font-semibold py-5">
           Available flights
         </div>
-        <div className="mx-96 text-center mb-20 mt-10">
-          <Table columns={columns} data={Plane} />
+        <div className="mx-96 text-center mb-20 mt-10 ">
+          <Table columns={columns} data={Plane}/>
         </div>
       </section>
     </>

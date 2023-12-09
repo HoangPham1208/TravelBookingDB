@@ -1,45 +1,97 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";  
 
 
-const passenger = [
-  {
-    "name": "Nguyen Van A",
-    "phone": "0123456789",
-    "email": "nva@email",
-    "cid": "123456789",
-    "birthday": "2000-01-01",
-    "cabinType": "Economy"
-  },
-  {
-    "name": "Nguyen Van B",
-    "phone": "0123456789",
-    "email": "nvb@email",
-    "cid": "123456788",
-    "birthday": "2000-01-02",
-    "cabinType": "Economy"
-  },
-  {
-    "name": "Nguyen Van C",
-    "phone": "0123456789",
-    "email": "nvc@email",
-    "cid": "123456787",
-    "birthday": "2000-01-03",
-    "cabinType": "Bussiness"
-  },
-  {
-    "name": "Nguyen Van D",
-    "phone": "0123456789",
-    "email": "nvd@email",
-    "cid": "123456786",
-    "birthday": "2000-01-04",
-    "cabinType": "Bussiness"
-  }
-]
+// const passenger = [
+//   {
+//     "name": "Nguyen Van A",
+//     "phonenumber": "0123456789",
+//     "email": "nva@email",
+//     "CCCD": "123456789",
+//     "birthday": "2000-01-01",
+//     "cabinType": "Economy"
+//   },
+//   {
+//     "name": "Nguyen Van B",
+//     "phonenumber": "0123456789",
+//     "email": "nvb@email",
+//     "CCCD": "123456788",
+//     "birthday": "2000-01-02",
+//     "cabinType": "Economy"
+//   },
+//   {
+//     "name": "Nguyen Van C",
+//     "phonenumber": "0123456789",
+//     "email": "nvc@email",
+//     "CCCD": "123456787",
+//     "birthday": "2000-01-03",
+//     "cabinType": "Bussiness"
+//   },
+//   {
+//     "name": "Nguyen Van D",
+//     "phonenumber": "0123456789",
+//     "email": "nvd@email",
+//     "CCCD": "123456786",
+//     "birthday": "2000-01-04",
+//     "cabinType": "Bussiness"
+//   },
+//   {
+//     "name": "Nguyen Van A",
+//     "phonenumber": "0123456789",
+//     "email": "nva@email",
+//     "CCCD": "123456789",
+//     "birthday": "2000-01-01",
+//     "cabinType": "Economy"
+//   },
+//   {
+//     "name": "Nguyen Van A",
+//     "phonenumber": "0123456789",
+//     "email": "nva@email",
+//     "CCCD": "123456789",
+//     "birthday": "2000-01-01",
+//     "cabinType": "Economy"
+//   },
+//   {
+//     "name": "Nguyen Van A",
+//     "phonenumber": "0123456789",
+//     "email": "nva@email",
+//     "CCCD": "123456789",
+//     "birthday": "2000-01-01",
+//     "cabinType": "Economy"
+//   },
+//   {
+//     "name": "Nguyen Van A",
+//     "phonenumber": "0123456789",
+//     "email": "nva@email",
+//     "CCCD": "123456789",
+//     "birthday": "2000-01-01",
+//     "cabinType": "Economy"
+//   },
+//   {
+//     "name": "Nguyen Van A",
+//     "phonenumber": "0123456789",
+//     "email": "nva@email",
+//     "CCCD": "123456789",
+//     "birthday": "2000-01-01",
+//     "cabinType": "Economy"
+//   },
+  
+// ]
 
 
 export default function PassengerList({visible, onClose}){
+    const [passenger, setPassenger] = useState([]);
+    useEffect(() => {
+      if(localStorage.getItem("ticket") && localStorage.getItem("Ticket ID") !== null){
+        setPassenger(JSON.parse(localStorage.getItem("ticket"))[localStorage.getItem("Ticket ID")].passenger);
+      }
+    }, [localStorage.getItem("Ticket ID")])
     const handleOnClose = () => {
+        localStorage.removeItem("Ticket ID");
+        onClose();
+    }
+    const handleOnSubmit = () => {
+        localStorage.removeItem("Ticket ID");
         onClose();
     }
     const navigate = useNavigate();
@@ -66,23 +118,22 @@ export default function PassengerList({visible, onClose}){
             </div>
           </div>
           <div className="text-center font-semibold font-serif text-2xl">
-            PASSENGERS LIST OF TICKET NO. 1
+            PASSENGERS LIST OF PLANE <span className="font-sans font-bold text-teal-400">{JSON.parse(localStorage.getItem("ticket"))[localStorage.getItem("Ticket ID")].flightID}</span>
           </div>
           <div className="text-center font-medium font-serif text-lg">
-            Number of passengers: 4
+            Number of passengers: {passenger.length}
           </div>
           {/* <!-- Header --> */}
-          <div className="flex justify-center overflow-y-scroll h-[400px]">
-            <table className="text-center mb-10 mt-5 ">
+          <div className="flex justify-center  ">
+            <table className="text-center m-10 ">
               <thead className="text-center">
                 <tr>
-                  <th className="px-4 py-2 ">Full name</th>
-                  <th className="px-4 py-2 ">Phone number</th>
-                  <th className="px-4 py-2 ">Email</th>
-                  <th className="px-4 py-2 ">CID</th>
-                  <th className="px-4 py-2 ">Birthday</th>
-                  <th className="px-4 py-2 ">Cabin type</th>
-                  <th className="px-4 py-2 "></th>
+                  <th className=" ">Full name</th>
+                  <th className=" ">Phone number</th>
+                  <th className=" ">Email</th>
+                  <th className=" ">CID</th>
+                  <th className=" ">Birthday</th>
+                  <th className=" ">Cabin type</th>
                 </tr>
               </thead>
               <tbody>
@@ -90,28 +141,28 @@ export default function PassengerList({visible, onClose}){
                   passenger.map((item) => (
                     <tr>
                       <td className="border ">
-                        <input type="text" value={item.name} className="border-0 bg-transparent text-center"></input>
+                        <input type="text" 
+                          onChange={
+                            (e) => {
+                              item.name = e.target.value;
+                            }
+                          }
+                        value={item.name} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                       <td className="border ">
-                        <input type="text" value={item.phone} className="border-0 bg-transparent text-center"></input>
+                        <input type="text" value={item.phonenumber} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                       <td className="border">
-                        <input type="text" value={item.email} className="border-0 bg-transparent text-center"></input>
+                        <input type="text" value={item.email} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                       <td className="border ">
-                        <input type="text" value={item.cid} className="border-0 bg-transparent text-center"></input>
+                        <input type="text" value={item.CCCD} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                       <td className="border ">
-                        <input type="text" value={item.birthday} className="border-0 bg-transparent text-center"></input>
+                        <input type="text" value={item.birthday} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                       <td className="border">
-                        <input type="text" value={item.cabinType} className="border-0 bg-transparent text-center"></input>
-                      </td>
-                      <td className=" px-4">
-                        <button 
-                        type="button">
-                          <img src="/rectangle-close.svg" className="h-8" />
-                        </button>
+                        <input type="text" value={item.cabinType} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                     </tr>
                   ))
@@ -119,15 +170,7 @@ export default function PassengerList({visible, onClose}){
               </tbody>
             </table>
           </div>
-          <div className="flex justify-center">
-            <form>
-                <button
-                onClick={handleOnClose}
-                 type="button" className="pb-5"> 
-                  <img src="/circle-check.svg" className="h-8 p" />
-                </button>
-            </form>
-          </div>
+     
         </div>
       </div>
     </div>

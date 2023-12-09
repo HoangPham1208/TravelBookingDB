@@ -146,7 +146,7 @@ function Table({ columns, data }) {
 
   const [showPopupRevenue, setShowPopupRevenue] = useState(false);
 
-  const handleAction = (cell) => {
+  const handleAction = (row,cell) => {
     if (cell.column.id === "delete") {
       return <button
         onClick={
@@ -158,8 +158,14 @@ function Table({ columns, data }) {
     }
     else if (cell.column.id === "ChoosePlane") {
       return <button
-     onClick={()=>
-      navigate('/user/listPlane/passenger')
+      onClick={()=>{
+        localStorage.setItem('MaSoMayBay',row.cells[0].value)
+        localStorage.setItem('ThoiGianXuatPhat',row.cells[3].value)
+        localStorage.setItem('ThoiGianHaCanh',row.cells[4].value)
+        localStorage.setItem('DiaDiemXuatPhat',row.cells[1].value)
+        localStorage.setItem('DiaDiemHaCanh',row.cells[2].value)
+        navigate('/user/listPlane/passenger')
+      }
      }
     ><img src="/paper-plane.svg" className='h-7'/></button>
     }
@@ -263,7 +269,7 @@ function Table({ columns, data }) {
                             >
                               {cell.column.Cell.name === "defaultRenderer"
                                 // ? <div className="text-sm text-gray-500">{cell.render('Cell')}</div>
-                                ? handleAction(cell)
+                                ? handleAction(row,cell)
                                 : cell.render('Cell')
                               }
                             </td>

@@ -19,6 +19,8 @@ export default function LoginForm({visible, onClose}){
       password : password,
       role : role
     }
+    console.log(data)
+    
     axios.post("http://localhost:5000/login", data)
     .then((res) => {
       console.log(res.data)
@@ -29,6 +31,7 @@ export default function LoginForm({visible, onClose}){
         navigate("/provider")
       }
       cookie.set("token", res.data.token, {path: "/"})
+      cookie.set("role", data.role, {path: "/"})
     })
     .catch((err) => {
       console.log(err)

@@ -1,9 +1,13 @@
-import React from "react";  
+import React, { useEffect } from "react";  
 import { useNavigate } from "react-router-dom";
 import SearchingPlane from "./searchingPlane";
 import SearchingHotel from "./searchingHotel";
 import SearchingRestaurant from "./searchingRestaurant";
 import { useState } from "react";
+import Cookie from "universal-cookie";
+import axios from "axios";
+
+const cookie = new Cookie();
 
 export default function User() {
     const [isEmpty, setIsEmpty] = useState(true);
@@ -14,8 +18,71 @@ export default function User() {
         behavior: 'smooth'
       });
     }
+    useEffect(() => {
+      // check if localStorage is empty 
+      if (localStorage.getItem("ticket") === null) {
+        setIsEmpty(true);
+      }
+      else setIsEmpty(false);
+    }, []);
+    const handleLogout = () =>{
+      cookie.remove("token");
+      cookie.remove("role");
+      localStorage.clear();
+      navigate('/');
+    }
     const handleOrder = () =>{
-
+      axios.post("http://localhost:5000/order/generate", {token:cookie.get("token")})
+      .then((res) => {
+        let orderId = res.data.orderId;
+        let ticket = JSON.parse(localStorage.getItem("ticket"));
+        let flightID = ticket[0].flightID;
+        axios.post("http://localhost:5000/flightTicket/generate", {flightID, orderId})
+        .then((res) => {
+          let ticketId = res.data['ticketId']
+          // console.log(ticket)
+          // console.log(ticket[0].passenger[0])
+          for (let i = 0; i < ticket.length; i++) {
+            // get each passenger in each ticket
+            let passenger = ticket[i].passenger;
+            for (let j = 0; j < passenger.length; j++) {
+              let data = {
+                name: passenger[j].name,
+                phonenumber: passenger[j].phonenumber,
+                email: passenger[j].email,
+                CCCD: passenger[j].CCCD,
+                birthday: passenger[j].birthday,
+                ticketId: ticketId,
+                flightId: passenger[j].flightID,
+                cabinType: passenger[j].cabinType,
+              }
+              axios.post("http://localhost:5000/passenger/insert", data)
+              .then((res) => {
+                console.log(res);
+                console.log("passenger generated");
+                
+              })
+              .catch((err) => {
+                console.log(err);
+                console.log("passenger not generated");
+              });
+            }
+          }
+          console.log("ticket generated");
+          alert("Order success");
+          localStorage.clear();
+            setIsEmpty(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          console.log("ticket not generated");
+        }
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+        
     }
      return (
       <>
@@ -51,7 +118,7 @@ export default function User() {
                   <button onClick={() => navigate('/account')} href="#" className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Account</button>
                 </li>
                 <li>
-                  <button onClick={() => navigate('/')}  className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Logout</button>
+                  <button onClick={handleLogout}  className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Logout</button>
                 </li>
                 
               </ul>

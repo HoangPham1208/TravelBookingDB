@@ -1,6 +1,7 @@
 import React from "react";  
 import { useNavigate } from "react-router-dom";
 import Table from "../Utils/Table";
+import Cookies from "universal-cookie";
 
 const service = [
     {
@@ -43,7 +44,14 @@ const columns = [
 ]
 
 export default function Provider() {
+    const cookie = new Cookies();
    const navigate = useNavigate();
+    const handleLogout = () =>{
+      cookie.remove("token");
+      cookie.remove("role");
+      localStorage.clear();
+      navigate('/');
+    }
     return (
       <>
       <section className="relative isolate overflow-hidden bg-gray-900 xl:h-full pb-10">
@@ -68,10 +76,10 @@ export default function Provider() {
                   <a href="#" className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">What news ?</a>
                 </li>
                 <li>
-                  <button onClick={() => navigate('/account')} href="#" className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Account</button>
+                  <button href="#" className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Account</button>
                 </li>
                 <li>
-                  <button onClick={() => navigate('/')}  className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Logout</button>
+                  <button onClick={handleLogout}  className="block  text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 hover:text-teal-300 md:p-0 dark:text-white">Logout</button>
                 </li>
                 
               </ul>
