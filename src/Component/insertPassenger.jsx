@@ -16,6 +16,7 @@ export default function InsertPassenger() {
       ( async () => {
         const current = JSON.parse(localStorage.getItem('currentFlight')).flights
         const data = {
+        token: cookie.get("token"),
         startDate: current[0].NgayXuatPhat,
         deptLoc: current[0].NoiXuatPhat,
         destLoc: current[0].NoiHaCanh,
@@ -150,7 +151,7 @@ export default function InsertPassenger() {
             <div className="font-semibold py-1">Price: 0$</div>
           </div>
           <div className="font-semibold py-1 justify-center text-teal-600">
-            <span className="font-serif font-semibold"> Total: </span> {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD' }).format(passenger[i].Price)}
+            <span className="font-serif font-semibold"> Total: </span> {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(passenger[i].Price)}
           </div>
         </div>
         )
@@ -187,6 +188,13 @@ export default function InsertPassenger() {
           const checkEmail = passenger[i].email.split('@')
           if(checkEmail.length !== 2){
             alert("Please fill the correct email for passenger " + i)
+            return ;
+          }
+        }
+        // check leng = 12 
+        if(passenger[i].CCCD !== undefined){
+          if(passenger[i].CCCD.length !== 12){
+            alert("Please fill the correct CID for passenger " + i)
             return ;
           }
         }
@@ -259,6 +267,10 @@ export default function InsertPassenger() {
                     <button 
                     onClick={() => {
                       localStorage.removeItem('MaSoMayBay')
+                      localStorage.removeItem('ThoiGianXuatPhat')
+                      localStorage.removeItem('ThoiGianHaCanh')
+                      localStorage.removeItem('DiaDiemXuatPhat')
+                      localStorage.removeItem('DiaDiemHaCanh')
                       navigate('/user/listPlane')
                       }
                     }
@@ -294,7 +306,7 @@ export default function InsertPassenger() {
         </div>
       </section>
       <section>
-        <div className="text-center pb-5 text-2xl"><span className="font-serif font-semibold">Total cost </span>: {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD' }).format(total)}</div>
+        <div className="text-center pb-5 text-2xl"><span className="font-serif font-semibold">Total cost </span>: {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(total)}</div>
         <div className="text-center">
           {/* submit */}
           <button 

@@ -31,60 +31,66 @@ export default function User() {
       localStorage.clear();
       navigate('/');
     }
-    const handleOrder = () =>{
-      axios.post("http://localhost:5000/order/generate", {token:cookie.get("token")})
-      .then((res) => {
-        let orderId = res.data.orderId;
-        let ticket = JSON.parse(localStorage.getItem("ticket"));
-        let flightID = ticket[0].flightID;
-        axios.post("http://localhost:5000/flightTicket/generate", {flightID, orderId})
-        .then((res) => {
-          let ticketId = res.data['ticketId']
-          // console.log(ticket)
-          // console.log(ticket[0].passenger[0])
-          for (let i = 0; i < ticket.length; i++) {
-            // get each passenger in each ticket
-            let passenger = ticket[i].passenger;
-            for (let j = 0; j < passenger.length; j++) {
-              let data = {
-                name: passenger[j].name,
-                phonenumber: passenger[j].phonenumber,
-                email: passenger[j].email,
-                CCCD: passenger[j].CCCD,
-                birthday: passenger[j].birthday,
-                ticketId: ticketId,
-                flightId: passenger[j].flightID,
-                cabinType: passenger[j].cabinType,
+    const handleOrder = async () => {
+      try {
+        const orderResponse = await axios.post("http://localhost:5000/order/generate", { token: cookie.get("token") });
+        const orderId = orderResponse.data.orderId;
+        const ticket = JSON.parse(localStorage.getItem("ticket"));
+    
+        for (let i = 0; i < ticket.length; i++) {
+          const passenger = ticket[i].passenger;
+    
+          try {
+            const flightTicketResponse = await axios.post("http://localhost:5000/flightTicket/generate", { token: cookie.get("token"),flightID: ticket[i].flightID, orderId });
+            const ticketId = flightTicketResponse.data['ticketId'];
+    
+            const insertPassenger = async (data) => {
+              try {
+                const passengerResponse = await axios.post("http://localhost:5000/passenger/insert", data);
+                console.log(passengerResponse);
+                console.log("Passenger generated");
+              } catch (err) {
+                console.error(err);
+                console.log("Passenger not generated");
               }
-              axios.post("http://localhost:5000/passenger/insert", data)
-              .then((res) => {
-                console.log(res);
-                console.log("passenger generated");
-                
-              })
-              .catch((err) => {
-                console.log(err);
-                console.log("passenger not generated");
-              });
+            };
+    
+            for (let j = 0; j < passenger.length; j++) {
+              try {
+                const data = {
+                  token: cookie.get("token"),
+                  name: passenger[j].name,
+                  phonenumber: passenger[j].phonenumber,
+                  email: passenger[j].email,
+                  CCCD: passenger[j].CCCD,
+                  birthday: passenger[j].birthday,
+                  ticketId: ticketId,
+                  flightId: passenger[j].flightID,
+                  cabinType: passenger[j].cabinType,
+                };
+    
+                await insertPassenger(data);
+              } catch (err) {
+                console.error(err);
+              }
             }
+          } catch (err) {
+            console.error(err);
+            console.log("Ticket not generated");
           }
-          console.log("ticket generated");
-          alert("Order success");
-          localStorage.clear();
-            setIsEmpty(true);
-        })
-        .catch((err) => {
-          console.log(err);
-          console.log("ticket not generated");
         }
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-        
-    }
-     return (
+    
+        console.log("All tickets generated");
+        localStorage.clear();
+        setIsEmpty(true);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    
+    
+
+   return (
       <>
       <section className="relative isolate overflow-hidden bg-gray-900 xl:h-full pb-10">
         <img
@@ -138,7 +144,9 @@ export default function User() {
         </div>
         <div className="text-white text-center">
           <button 
-            onClick={(isEmpty) ? handleScroll : handleOrder}
+            onClick={
+              (isEmpty) ? handleScroll : handleOrder
+            }
           className="bg-gray-400 p-3 rounded-3xl font-serif font-medium text-4xl hover:bg-teal-300 hover:text-fuchsia-500">Order now</button>
         </div>
       </section>

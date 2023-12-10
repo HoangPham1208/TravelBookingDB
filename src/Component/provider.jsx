@@ -1,57 +1,94 @@
-import React from "react";  
+import React, { useEffect, useState } from "react";  
 import { useNavigate } from "react-router-dom";
 import Table from "../Utils/Table";
 import Cookies from "universal-cookie";
+import axios from "axios";
 
-const service = [
-    {
-        ID: 1,
-        name: "Plane",
-        status: "Active",
-        link: "https://planewre.com"
-    },
-    {
-        ID: 2,
-        name: "Hotel",
-        status: "Active",
-        link: "https://hotelwre.com"
-    },
-    {
-        ID: 3,
-        name: "Restaurant",
-        status: "Active",
-        link: "https://restaurantwre.com"
-    }
-]
+// const service = [
+//     {
+//         ID: 1,
+//         name: "Plane",
+//         status: "Active",
+//         link: "https://planewre.com"
+//     },
+//     {
+//         ID: 2,
+//         name: "Hotel",
+//         status: "Active",
+//         link: "https://hotelwre.com"
+//     },
+//     {
+//         ID: 3,
+//         name: "Restaurant",
+//         status: "Active",
+//         link: "https://restaurantwre.com"
+//     }
+// ]
 
 const columns = [
     {
         Header: "ID",
-        accessor: "ID"
+        accessor: "tin"
     },
     {
         Header: "Name",
         accessor: "name"
     },
     {
-        Header: "Status",
-        accessor: "status"
+        Header: "Type",
+        accessor: "type"
     },
-    {
-        Header: "Link",
-        accessor: "link"
-    },
+    
 ]
 
 export default function Provider() {
     const cookie = new Cookies();
-   const navigate = useNavigate();
+    const navigate = useNavigate();
     const handleLogout = () =>{
       cookie.remove("token");
       cookie.remove("role");
       localStorage.clear();
       navigate('/');
     }
+    const [service, setService] = useState([]);
+    useEffect(() => {
+      (async () => {
+        const dataColumn = ["tin","name","type"]
+        const showData = []
+        axios.post("http://localhost:5000/getFlightService", { token: cookie.get("token") })
+        .then((res) => {
+          console.log(res.data.flightService);
+          let temp = {}
+          for (let i = 0; i < res.data.flightService.length; i++) {
+            temp = {}
+            temp[dataColumn[0]] = res.data.flightService[i].MaSoThue;
+            temp[dataColumn[1]] = res.data.flightService[i].TenHang;
+            temp[dataColumn[2]] = res.data.flightService[i].LoaiDichVu;
+            showData.push(temp);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        axios.post("http://localhost:5000/getHotelService", { token: cookie.get("token") })
+        .then((res) => {
+          console.log(res.data.hotelService);
+          let temp = {}
+          for (let i = 0; i < res.data.hotelService.length; i++) {
+            temp = {}
+            temp[dataColumn[0]] = res.data.hotelService[i].MaSoThue;
+            temp[dataColumn[1]] = res.data.hotelService[i].TenKhachSan;
+            temp[dataColumn[2]] = res.data.hotelService[i].LoaiDichVu;
+            showData.push(temp);
+            setService(showData);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      })();
+    }, [])
+    
     return (
       <>
       <section className="relative isolate overflow-hidden bg-gray-900 xl:h-full pb-10">

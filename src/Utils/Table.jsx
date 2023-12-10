@@ -6,7 +6,6 @@ import { classNames } from '../shared/Utils'
 import { SortIcon, SortUpIcon, SortDownIcon } from '../shared/Icons'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import RevenueDetail from "../Utils/PopupRevenue";
 
 
 // Define a default UI for filtering
@@ -144,7 +143,6 @@ function Table({ columns, data }) {
     usePagination,  // new
   )
 
-  const [showPopupRevenue, setShowPopupRevenue] = useState(false);
 
   const handleAction = (row,cell) => {
     if (cell.column.id === "delete") {
@@ -171,12 +169,18 @@ function Table({ columns, data }) {
     }
     else if (cell.column.id === "Detail"){
       return <button onClick={
-        () => navigate('/cart/details')
+        () => {
+          localStorage.setItem('MaDonHang',row.cells[0].value)
+          navigate('/cart/details')
+        }
       }><img src="/info.svg" className='h-7'/></button>
     }
     else if (cell.column.id === "DetailsRevenue"){
       return <button
-      onClick={() => setShowPopupRevenue(true)}
+      onClick={()=>{
+        localStorage.setItem('name',row.cells[1].value)
+        navigate('/provider/managerService/detailPlaneService')
+      }}
       ><img src="/progress.svg" className='h-6'/></button>
     }
     else if (cell.column.id === "Update"){
@@ -187,6 +191,9 @@ function Table({ columns, data }) {
     }
     else if (cell.column.id === "DeleteSerive"){
       return <button><img src="/close.svg" className='h-7'/></button>
+    }
+    else if (cell.column.id === "RestHotel"){
+      return <button><img src="/hotel.svg" className='h-7'/></button>
     }
     return <div className="text-sm text-gray-500">{cell.render('Cell')}</div>
   }
@@ -348,7 +355,6 @@ function Table({ columns, data }) {
           </div>
         </div>
       </div>
-      <RevenueDetail visible={showPopupRevenue} onClose={setShowPopupRevenue}/>
     </>
   )
 }

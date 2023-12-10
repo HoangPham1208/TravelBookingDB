@@ -1,42 +1,34 @@
-import React, {useState} from "react";  
+import React, {useEffect, useState} from "react";  
 import { useNavigate } from "react-router-dom";
 import Table from "../Utils/Table";
 import Cookies from "universal-cookie";
+import axios from "axios";
 
-const Order = [
-  {"id": "001", "status" : "pending", "payment_method" : "visa", "number" : "123456789", "total" : "1000$", "date" : "2021-10-10", "assistant" : "John"},
-  {"id": "002", "status" : "pending", "payment_method" : "visa", "number" : "123456789", "total" : "1000$", "date" : "2021-11-10", "assistant" : "John"},
-  {"id": "003", "status" : "done", "payment_method" : "visa", "number" : "123456789", "total" : "1000$", "date" : "2021-10-10", "assistant" : "John"},
-  {"id": "004", "status" : "pending", "payment_method" : "visa", "number" : "123456789", "total" : "1000$", "date" : "2022-10-10", "assistant" : "John"},
-  {"id": "005", "status" : "pending", "payment_method" : "visa", "number" : "123456789", "total" : "1000$", "date" : "2021-10-10", "assistant" : "John"},
-  {"id": "006", "status" : "pending", "payment_method" : "visa", "number" : "123456789", "total" : "1000$", "date" : "2023-8-10", "assistant" : "John"},
-  {"id": "007", "status" : "done", "payment_method" : "visa", "number" : "123456789", "total" : "1000$", "date" : "2021-10-10", "assistant" : "John"},
-  {"id": "008", "status" : "pending", "payment_method" : "visa", "number" : "123456789", "total" : "1000$", "date" : "2021-10-10", "assistant" : "John Alexander Hamilton"},
-]
 const columns = [
   {
-    name: 'ID',
-    accessor: 'id',
+    name: "Order ID",
+    accessor: "MaDonHang",
+  }
+  ,
+  {
+    name: "Payment Method",
+    accessor: "HinhThucThanhToan",
   },
   {
-    name: 'Payment method',
-    accessor: 'payment_method',
+    name: "Payment number",
+    accessor: "TaiKhoanNganHang",
   },
   {
-    name: 'Number',
-    accessor: 'number',
+    name: "Date Order",
+    accessor: "NgayGiaoDich",
   },
   {
-    name: 'Date',
-    accessor: 'date',
+    name: "Status",
+    accessor: "TinhTrangDonHang"
   },
   {
-    name: 'Total',
-    accessor: 'total',
-  },
-  {
-    name: 'Assistant',
-    accessor: 'assistant',
+    name: "Total",
+    accessor: "TongTien",
   },
   {
     name: 'Detail',
@@ -49,8 +41,9 @@ const columns = [
 ];
 
 export default function Cart() {
-  const cookie = new Cookies(); 
-    const currentOrder = Order.filter((order) => order.status === "pending");
+  const cookie = new Cookies();
+  const [Order, setOrder] = useState([]);
+  const currentOrder = Order;
   const [showBankingForm, setShowBankingForm] = useState(false);
   const handleOnClose = () => setShowBankingForm(false);
    const navigate = useNavigate();
@@ -60,6 +53,23 @@ export default function Cart() {
       localStorage.clear();
       navigate('/');
     }
+    useEffect(() => {
+      (async () => {
+        axios.post("http://localhost:5000/getOrder", {token:cookie.get("token")})
+        .then((res) => {
+          console.log(res.data)
+          const temp = res.data.map((item) => {
+            const newTime = item.NgayGiaoDich.split('T')[0]
+            return {...item,NgayGiaoDich:newTime}
+          })
+          setOrder(temp);
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      })();
+    }, []);
+    
     return (
       <>
       <section className="relative isolate overflow-hidden bg-gray-900 xl:h-full pb-10">

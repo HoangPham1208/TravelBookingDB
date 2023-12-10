@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";  
 
 
@@ -81,11 +81,26 @@ import { useNavigate } from "react-router-dom";
 
 export default function PassengerList({visible, onClose}){
     const [passenger, setPassenger] = useState([]);
+
+    const [load, setLoad] = useState(false);
+    const hasMounted = useRef(false);
     useEffect(() => {
-      if(localStorage.getItem("ticket") && localStorage.getItem("Ticket ID") !== null){
+      // load ticket from local storage
+      if (localStorage.getItem("ticket") && localStorage.getItem("Ticket ID") !== null) {
         setPassenger(JSON.parse(localStorage.getItem("ticket"))[localStorage.getItem("Ticket ID")].passenger);
+        setLoad(true);
       }
-    }, [localStorage.getItem("Ticket ID")])
+    })
+    useEffect(() => {
+      if(!hasMounted.current){
+      if(localStorage.getItem("ticket") && localStorage.getItem("Ticket ID") !== null){
+          setPassenger(JSON.parse(localStorage.getItem("ticket"))[localStorage.getItem("Ticket ID")].passenger);
+          setLoad(true);
+        }}
+        else {
+        hasMounted.current = true;
+      }
+    }, [load])
     const handleOnClose = () => {
         localStorage.removeItem("Ticket ID");
         onClose();
@@ -96,6 +111,7 @@ export default function PassengerList({visible, onClose}){
     }
     const navigate = useNavigate();
   if (!visible) return null;
+
   return (
     <section className="flex justify-center place-content-center place-self-center">
       <div 
@@ -147,22 +163,22 @@ export default function PassengerList({visible, onClose}){
                               item.name = e.target.value;
                             }
                           }
-                        value={item.name} className="border-0 bg-transparent text-center py-3"></input>
+                        value={(load)?item.name:null} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                       <td className="border ">
-                        <input type="text" value={item.phonenumber} className="border-0 bg-transparent text-center py-3"></input>
+                        <input type="text" value={(load )?item.phonenumber:null} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                       <td className="border">
-                        <input type="text" value={item.email} className="border-0 bg-transparent text-center py-3"></input>
+                        <input type="text" value={(load)?item.email:null} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                       <td className="border ">
-                        <input type="text" value={item.CCCD} className="border-0 bg-transparent text-center py-3"></input>
+                        <input type="text" value={(load)?item.CCCD:null} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                       <td className="border ">
-                        <input type="text" value={item.birthday} className="border-0 bg-transparent text-center py-3"></input>
+                        <input type="text" value={(load)?item.birthday:null} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                       <td className="border">
-                        <input type="text" value={item.cabinType} className="border-0 bg-transparent text-center py-3"></input>
+                        <input type="text" value={(load)?item.cabinType:null} className="border-0 bg-transparent text-center py-3"></input>
                       </td>
                     </tr>
                   ))

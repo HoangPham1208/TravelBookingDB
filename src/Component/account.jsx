@@ -1,8 +1,9 @@
-import React, {useState} from "react";  
+import React, {useEffect, useState} from "react";  
 import { useNavigate } from "react-router-dom";
 import BankingForm from "../Utils/PopupBanking";
 import Table from "../Utils/Table";
 import Cookies from "universal-cookie";
+import axios from "axios";
 
 const Order = [
   {"id": "001", "status" : "pending", "payment_method" : "visa", "number" : "123456789", "total" : "1000$", "date" : "2021-10-10", "assistant" : "John"},
@@ -53,6 +54,23 @@ export default function Account() {
       localStorage.clear();
       navigate('/');
     }
+    const [profile, setProfile] = useState({});
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+      (async () => {
+        axios.post("http://localhost:5000/profile", {token:cookie.get("token")})
+        .then((res) => {
+          console.log(res.data)
+          setProfile(res.data[0])
+          setLoading(true)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
+      }
+      )();
+    }, []);
     return (
       <>
       <section className="relative isolate overflow-hidden bg-gray-900 xl:h-full pb-10">
@@ -97,7 +115,7 @@ export default function Account() {
         </nav>
         <div className="mx-auto px-auto pb-7">
           <div className="grid">
-            <h2 className="text-4xl font-bold tracking-wider text-white sm:text-7xl place-content-center text-center font-serif ">Hello, User </h2>
+            <h2 className="text-4xl font-bold tracking-wider text-white sm:text-7xl place-content-center text-center font-serif ">Hello, {profile.Ten} </h2>
           </div>
         </div>
       </section>
@@ -126,25 +144,33 @@ export default function Account() {
               <input className="bg-gray-200 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" disabled="true" placeholder="Your Name: "></input>
             </div>
             <div className="px-2">
-              <input className="bg-gray-100 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" placeholder="First name"></input>
+              <input 
+              value={profile.Ho}
+              className="bg-gray-100 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" placeholder="First name"></input>
             </div>
             <div className="px-2">
-              <input className="bg-gray-100 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" placeholder="Middle name"></input>
+              <input
+              value={profile.TenDem}
+              className="bg-gray-100 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" placeholder="Middle name"></input>
             </div>
             <div className="px-2">
-              <input className="bg-gray-100 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" placeholder="Last name"></input>
+              <input 
+              value={profile.Ten}
+              className="bg-gray-100 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" placeholder="Last name"></input>
             </div>
           </div>
           <div className="flex justify-start pt-10">
             {/* date of birth */}
             <div className="px-2">
-              <input className="bg-gray-200 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" disabled="true" placeholder="Date of birth: "></input>
+              <input 
+              className="bg-gray-200 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" disabled="true" placeholder="Date of birth: "></input>
             </div>
             <div className="px-2">
-            <input type="date" className="bg-gray-100 rounded-xl p-2 justify-center text-center font-medium w-36" 
+            <input 
+              value={(loading)?profile.NgaySinh.split("T")[0]:null}
+            type="date" className="bg-gray-100 rounded-xl p-2 justify-center text-center font-medium w-36" 
             onFocus={(e) => (e.currentTarget.type = "date")}
             onBlur={(e) => (e.currentTarget.type = "text")}
-            value={"2023-12-22"}
             placeholder="Date of birth"></input>
             </div>
           </div>
@@ -163,7 +189,9 @@ export default function Account() {
           </div>
           <div className="flex justify-start pt-10">
             <div className="px-2">
-              <input className="bg-gray-200 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" disabled="true" placeholder="CCCD: "></input>
+              <input 
+              value = {profile.soCCCD}
+              className="bg-gray-200 rounded-xl p-2 md:w-28 w-20 text-center font-medium justify-center" disabled="true" placeholder="CCCD: "></input>
             </div>
             <div className="px-2">
                <input type="text" className="bg-gray-100 rounded-xl p-2 md:w-36 w-20 text-center font-medium justify-center" placeholder="012345678999" disabled="true"></input>

@@ -68,7 +68,7 @@ export default function TicketPlane() {
             <div className="font-semibold"><span className="text-teal-400">{ticket[i].timeDeparture}</span></div>
             <div className="font-semibold"><span className="text-teal-400">{ticket[i].timeArrival}</span></div>
             <div></div>
-            <div className="font-bold">Total cost: <span className="font-medium text-green-500">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD' }).format(ticket[i].total)}</span></div>
+            <div className="font-bold">Total cost: <span className="font-medium text-green-500">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(ticket[i].total)}</span></div>
           </div>
           )
         }
@@ -130,7 +130,7 @@ export default function TicketPlane() {
           }
         </div>
         <div className="text-center font-medium font-serif text-lg pb-3"> Number of tickets: {quantityOfTicket}</div>
-        <div className="text-center font-medium font-serif text-xl"> Total: <span className="text-green-500">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD' }).format(totalCost)}</span></div>
+        <div className="text-center font-medium font-serif text-xl"> Total: <span className="text-green-500">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(totalCost)}</span></div>
         <div className="container my-7 mx-auto grid grid-cols-2 gap-20 justify-center items-center p-2 md:p-0">          
             {getTicket()}
         </div>

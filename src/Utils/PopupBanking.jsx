@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";  
-
+import axios from "axios";
+import Cookies from "universal-cookie";
 
 const PaymentData = [
   {"method" : "vietcombank", "number" : "123456789", "status": "active"},
@@ -23,11 +24,28 @@ const PaymentData = [
 ]
 
 export default function BankingList({visible, onClose}){
+  const cookie =  new Cookies();
   const navigate = useNavigate();
   const handleOnClose = () => {
     onClose();
   }
+  const [bankAccount, setBankAccount] = useState([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    (async () => {
+      axios.post("http://localhost:5000/bankAccount", {token:cookie.get("token")})
+          .then((res) => {
+            console.log(res.data)
+            setBankAccount(res.data);
+            setLoading(true);
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+    })();
+  }, []);
   if (!visible) return null;
+  if (!loading) return null;
   return (
     <section className="flex justify-center place-content-center place-self-center">
       <div 
@@ -53,21 +71,21 @@ export default function BankingList({visible, onClose}){
             PAYMENT
           </div>
           {/* <!-- Header --> */}
-          <div className="flex justify-center overflow-y-scroll h-[400px]">
+          <div className="flex justify-center overflow-y-scroll ">
             <table className="text-center mb-10 mt-5 ">
               <thead className="">
                 <tr>
-                  <th className="px-4 py-2 ">Method</th>
-                  <th className="px-4 py-2 ">Number</th>
+                  <th className="px-4 py-2 ">Bank account number</th>
+                  <th className="px-4 py-2 ">Bank</th>
                   <th className="px-4 py-2 ">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {PaymentData.map((item) => (
+                {bankAccount.map((item) => (
                   <tr>
-                    <td className="border px-4 py-2">{item.method}</td>
-                    <td className="border px-4 py-2">{item.number}</td>
-                    {(item.status == "active") ? ( <td className="border px-4 py-2 text-green-500">{item.status}</td> ) : ( <td className="border px-4 py-2 text-red-500">{item.status}</td> )}
+                    <td className="border px-4 py-2">{item.SoTaiKhoan}</td>
+                    <td className="border px-4 py-2">{item.TenNganHang}</td>
+                    {(item.status == "active") ? ( <td className="border px-4 py-2 text-green-500">{item.TrangThai}</td> ) : ( <td className="border px-4 py-2 text-red-500">{item.TrangThai}</td> )}
                   </tr>
                 ))}
               </tbody>

@@ -19,78 +19,62 @@ import axios from 'axios'
 // ]
 const columns = [
   {
-    name: 'ID',
-    accessor: 'MaSoMayBay',
+    name: 'TID',
+    accessor: 'MaSoThueKhachSan',
   },
   {
-    name: 'Departure',
-    accessor: 'DiaDiemXuatPhat',
+    name: 'Hotel name',
+    accessor: 'TenKhachSan',
   },
   {
-    name: 'Arrival',
-    accessor: 'DiaDiemHaCanh',
+    name: 'City',
+    accessor: 'ThanhPho',
   },
   {
-    name: 'Datetime departure',
-    accessor: 'ThoiGianXuatPhat',
+    name: 'Address',
+    accessor: 'DiaChi',
   },
   {
-    name: 'Datetime arrival',
-    accessor: 'ThoiGianHaCanh',
+    name: 'Description',
+    accessor: 'MoTa',
+  },
+  {
+    name: 'Type Room',
+    accessor: 'LoaiPhong',
   },
   {
     name: 'Price',
-    accessor: 'GiaKhoang',
+    accessor: 'GiaPhong',
   },
   {
-    name: 'Choose plane',
-    accessor: 'ChoosePlane',
+    name: 'Quantity',
+    accessor: 'SoLuongCungCap',
   },
+  {
+    name: 'RestHotel',
+    accessor: 'RestHotel',
+  }
 ];
-export default function ListPlane() {
+export default function ListHotel() {
     const cookie = new Cookies();
-    const [Plane,setPlane] = useState([])
+    const [hotel,setHotel] = useState([])
     useEffect(()=>{
       ( async () => {
-        const current = JSON.parse(localStorage.getItem('currentFlight')).flights
+        const current = JSON.parse(localStorage.getItem('currentHotel')).hotels
         const data = {
-        token: cookie.get('token'),
-        startDate: current[0].NgayXuatPhat,
-        deptLoc: current[0].NoiXuatPhat,
-        destLoc: current[0].NoiHaCanh,
-        quantity: current[0].SoLuong
+            token: cookie.get("token"),
+            checkInDate: current[0].checkInDate,
+            checkOutDate: current[0].checkOutDate,
+            city: current[0].city
         }
-        await axios.post('http://localhost:5000/flight', data).then((res) => {
-           console.log(res)
-        // the Plane data have datetime in time arrival and departure column, so we need to convert it to time only
-        const newPlane = res.data.flights.map((item) => {
-          const newTime = item.ThoiGianXuatPhat.split('T')[1].split('.')[0]
-          const newTime2 = item.ThoiGianHaCanh.split('T')[1].split('.')[0]
-          return {...item,ThoiGianXuatPhat:newTime,ThoiGianHaCanh:newTime2}
-        })
-        // Cause the plane can be duplicate, so we need to remove it, we only choose the plane of each airline which have the lowest price
-        const newPlane2 = []
-        for(let i = 0; i < newPlane.length; i++){
-          let check = true
-          for(let j = 0; j < newPlane2.length; j++){
-            if(newPlane[i].MaSoMayBay === newPlane2[j].MaSoMayBay){
-              check = false
-              if(newPlane[i].GiaKhoang < newPlane2[j].GiaKhoang){
-                newPlane2[j] = newPlane[i]
-              }
-            }
-          }
-          if(check){
-            newPlane2.push(newPlane[i])
-            newPlane[i].GiaKhoang = newPlane[i].GiaKhoang.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
-          }
+        await axios.post('http://localhost:5000/room', data).then((res) => {
+           console.log(res.data.rooms)
+           setHotel(res.data.rooms)
+        }).catch((err) => {
+            console.log(err);
         }
-        setPlane(newPlane2)
-      }).catch((err) => {
-        console.log(err);
-      }
-      );
-      })();
+        );
+        })();
 
     },[]);
     const navigate = useNavigate();
@@ -145,17 +129,16 @@ export default function ListPlane() {
         </nav>
         <div className="mx-auto px-auto pb-7">
           <div className="grid">
-            <h2 className="text-4xl font-bold tracking-wider text-white sm:text-3xl place-content-center text-center font-serif "> "The purpose of life is to live it, to taste experience to the utmost, to reach out eagerly and without fear for newer and richer experiences."</h2>
-            <h2 className="text-center text-white font-serif text-3xl pt-5">- Eleanor Roosevelt -</h2>
+            <h2 className="text-4xl font-bold tracking-wider text-white sm:text-3xl place-content-center text-center font-serif "> Amidst the chaos of life, find solace in the simplicity of relaxation.<br/> It's not a luxury; it's a necessity for a balanced and fulfilling existence.</h2>
           </div>
         </div>
       </section>
       <section>
         <div className="text-center text-3xl font-serif font-semibold py-5">
-          Available flights
+          Available hotel rooms
         </div>
         <div className="mx-96 text-center mb-20 mt-10 ">
-          <Table columns={columns} data={Plane}/>
+          <Table columns={columns} data={hotel}/>
         </div>
       </section>
     </>

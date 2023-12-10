@@ -8,6 +8,8 @@ import TicketPlane from "./Component/ticketPlane";
 import Details from "./Component/details";
 import Provider from "./Component/provider";
 import ManagerService from "./Component/managerService";
+import ListHotel from "./Component/listHotel";
+import DetailPlane from "./Component/detailPlaneService";
 
 import {Routes, Route, BrowserRouter } from "react-router-dom";
 import React from "react";
@@ -46,6 +48,11 @@ export default (
                 {<ProtectedRoute>
                     <TicketPlane />
                 </ProtectedRoute>} />
+            <Route path="/user/listHotel" element={
+                <ProtectedRoute>
+                    <ListHotel />
+                </ProtectedRoute>} />
+
             <Route path="/provider" element={
                 <ProtectedRoute>
                     <Provider />
@@ -55,6 +62,11 @@ export default (
                 <ProtectedRoute>
                     <ManagerService />
                 </ProtectedRoute>} />
+            <Route path="/provider/managerService/detailPlaneService" element={
+                <ProtectedRoute>
+                    <DetailPlane />
+                </ProtectedRoute>} />
+            
         </Routes>
     </BrowserRouter>
 );
